@@ -1,19 +1,16 @@
-import { PrismaClient } from "@prisma/client";
 import { Router } from "express";
+import { AdminControllers } from "./admin.controller";
 
 
-const router = Router();
-const prisma = new PrismaClient();
+const router = Router(); 
 
-router.get('/', async (req, res) => {
-    const result = await prisma.admin.findMany({})
-    res.status(200).json({
-        success: true,
-        message: "All admins retrieved successfully",
-        status: 200,
-        data: result
-    })
-} )
+router.get('/', AdminControllers.getAllAdmins)
+
+router.get('/:id', AdminControllers.getSingleAdmin)
+
+router.delete('/:id', AdminControllers.deleteAdmin)
+
+router.patch('/:id', AdminControllers.updateAdmin)
 
 
-export const adminRoutes = router
+export const adminRoutes = router;
