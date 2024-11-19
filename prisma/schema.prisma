@@ -42,6 +42,12 @@ model Admin {
   @@map("admins")
 }
 
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+  DELETED
+}
+
 enum UserRole {
   SUPER_ADMIN
   ADMIN
@@ -49,8 +55,3 @@ enum UserRole {
   PATIENT
 }
 
-enum UserStatus {
-  ACTIVE
-  BLOCKED
-  DELETED
-}
