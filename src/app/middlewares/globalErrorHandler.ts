@@ -5,7 +5,7 @@ type TErrorSources = {
     message: string;
 }[]
 const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
-
+    console.log(error.status);
     let statusCode = error.status ? error.status : 500;
     let message = error.message ? error.message : 'Something went wrong!';
     let errorSources: TErrorSources = [

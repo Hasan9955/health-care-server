@@ -2,21 +2,23 @@ import { Router } from "express";
 import { AdminControllers } from "./admin.controller"; 
 import validateRequest from "../../utility/validateRequest";
 import { adminUpdateValidationSchema } from "./admin.validation";
+import auth from "../../middlewares/verifyAuth";
+import { UserRole } from "@prisma/client";
 
 
 
 
 const router = Router();
 
-router.get('/', AdminControllers.getAllAdmins)
+router.get('/',  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN), AdminControllers.getAllAdmins)
 
-router.get('/:id', AdminControllers.getSingleAdmin)
+router.get('/:id', auth(UserRole.SUPER_ADMIN, UserRole.ADMIN), AdminControllers.getSingleAdmin)
 
-router.delete('/:id', AdminControllers.deleteAdmin)
+router.delete('/:id', auth(UserRole.SUPER_ADMIN, UserRole.ADMIN), AdminControllers.deleteAdmin)
 
-router.delete('/soft/:id', AdminControllers.softDeleteAdmin)
+router.delete('/soft/:id', auth(UserRole.SUPER_ADMIN, UserRole.ADMIN), AdminControllers.softDeleteAdmin)
 
-router.patch('/:id', validateRequest(adminUpdateValidationSchema), AdminControllers.updateAdmin)
+router.patch('/:id', auth(UserRole.SUPER_ADMIN, UserRole.ADMIN), validateRequest(adminUpdateValidationSchema), AdminControllers.updateAdmin)
 
 
 export const adminRoutes = router;
