@@ -66,7 +66,7 @@ cloudinary.config({
 });
 
 const uploadToCloudinary = async (file: TFile): Promise<TCloudinaryResponse | undefined> => {
-    console.log({ file });
+    
     return new Promise((resolve, reject) => {
         // Upload an image
         cloudinary.uploader.upload(file.path, 
