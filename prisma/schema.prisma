@@ -64,6 +64,7 @@ model Doctor {
 
   user              User                @relation(fields: [email], references: [email])
   doctorSpecialties DoctorSpecialties[]
+  doctorSchedules   DoctorSchedules[]
 
   @@map("doctors")
 }
@@ -112,18 +113,18 @@ model PatientHealthData {
   dateOfBirth         String
   gender              Gender
   bloodGroup          BloodGroup
-  hasAllergies        Boolean @default(false)
-  hasDiabetes         Boolean @default(false)
+  hasAllergies        Boolean       @default(false)
+  hasDiabetes         Boolean       @default(false)
   height              String
   weight              String
-  smokingStatus       Boolean @default(false)
+  smokingStatus       Boolean       @default(false)
   dietaryPreferences  String
-  pregnancyStatus     Boolean @default(false)
+  pregnancyStatus     Boolean       @default(false)
   mentalHealthHistory String
   immunizationStatus  String
-  hasPastSurgeries    Boolean @default(false)
-  recentAnxiety       Boolean @default(false)
-  recentDepression    Boolean @default(false)
+  hasPastSurgeries    Boolean       @default(false)
+  recentAnxiety       Boolean       @default(false)
+  recentDepression    Boolean       @default(false)
   maritalStatus       MaritalStatus @default(UNMARRIED)
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt
@@ -139,6 +140,29 @@ model MedicalReport {
   reportLink String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+}
+
+model Schedule {
+  id              String            @id @default(uuid())
+  startDateTime       DateTime
+  endDateTime         DateTime
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  doctorSchedules DoctorSchedules[]
+
+  @@map("schedule")
+}
+
+model DoctorSchedules {
+  doctorId      String
+  doctor        Doctor   @relation(fields: [doctorId], references: [id])
+  scheduleId    String
+  schedule      Schedule @relation(fields: [scheduleId], references: [id])
+  isBooked      Boolean
+  appointmentId String?
+
+  @@id([doctorId, scheduleId])
+  @@map("doctor_schedules")
 }
 
 enum UserStatus {
