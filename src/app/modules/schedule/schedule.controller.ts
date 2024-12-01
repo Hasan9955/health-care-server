@@ -1,4 +1,5 @@
 import catchAsync from "../../utility/catchAsync";
+import pick from "../../utility/pick";
 import sendResponse from "../../utility/response";
 import { scheduleServices } from "./schedule.service";
 
@@ -15,8 +16,12 @@ const insertIntoDB = catchAsync(async (req, res) => {
 })
 
 const getAllSchedules = catchAsync(async (req, res) => {
-    
-    const result = await scheduleServices.getAllSchedules()
+    const query = req.query;
+    const user = req.user;
+    const filterQuery = pick(query, ['startDateTime', 'endDateTime']);
+    const options = pick(query, ['page', 'limit', 'sortBy', 'sortOrder']);
+
+    const result = await scheduleServices.getAllSchedules(user, filterQuery, options)
 
     sendResponse(res, {
         message: "Schedules retrieved successfully",

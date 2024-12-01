@@ -17,8 +17,8 @@ const getAllPatients = catchAsync(async (req, res) => {
     sendResponse(res, {
         message: "All Patients retrieved successfully",
         statusCode: 200,
-        meta: result.meta,
-        data: result.data
+        meta: result?.meta,
+        data: result?.data
     })
 })
 

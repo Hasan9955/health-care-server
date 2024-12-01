@@ -10,6 +10,8 @@ router.post('/',
     auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
     scheduleControllers.insertIntoDB)
 
-router.get('/', scheduleControllers.getAllSchedules)
+router.get('/', 
+    auth(UserRole.DOCTOR),
+    scheduleControllers.getAllSchedules)
 
 export const scheduleRoutes = router;
