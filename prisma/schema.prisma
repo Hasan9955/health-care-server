@@ -65,6 +65,9 @@ model Doctor {
   user              User                @relation(fields: [email], references: [email])
   doctorSpecialties DoctorSpecialties[]
   doctorSchedules   DoctorSchedules[]
+  appointment       Appointment[]
+  prescription      Prescription[]
+  review            Review[]
 
   @@map("doctors")
 }
@@ -84,6 +87,9 @@ model Patient {
 
   patientHealthData PatientHealthData?
   medicalReport     MedicalReport[]
+  appointment       Appointment[]
+  Prescription      Prescription[]
+  review            Review[]
 
   @@map("patient")
 }
@@ -144,25 +150,110 @@ model MedicalReport {
 
 model Schedule {
   id              String            @id @default(uuid())
-  startDateTime       DateTime
-  endDateTime         DateTime
+  startDateTime   DateTime
+  endDateTime     DateTime
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   doctorSchedules DoctorSchedules[]
+  Appointment     Appointment?
 
   @@map("schedule")
 }
 
 model DoctorSchedules {
-  doctorId      String
-  doctor        Doctor   @relation(fields: [doctorId], references: [id])
-  scheduleId    String
-  schedule      Schedule @relation(fields: [scheduleId], references: [id])
-  isBooked      Boolean @default(false)
-  appointmentId String?
+  doctorId String
+  doctor   Doctor @relation(fields: [doctorId], references: [id])
+
+  scheduleId String
+  schedule   Schedule @relation(fields: [scheduleId], references: [id])
+
+  isBooked Boolean @default(false)
+
+  appointmentId String?      @unique
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id])
 
   @@id([doctorId, scheduleId])
   @@map("doctor_schedules")
+}
+
+model Appointment {
+  id String @id @default(uuid())
+
+  patientId String
+  patient   Patient @relation(fields: [patientId], references: [id])
+
+  doctorId String
+  doctor   Doctor @relation(fields: [doctorId], references: [id])
+
+  scheduleId String   @unique
+  schedule   Schedule @relation(fields: [scheduleId], references: [id])
+
+  videoCallingId  String
+  status          AppointmentStatus @default(SCHEDULED)
+  paymentStatus   PaymentStatus     @default(UNPAID)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  prescription    Prescription?
+  review          Review?
+  payment         Payment?
+  DoctorSchedules DoctorSchedules?
+
+  @@map("appointments")
+}
+
+model Payment {
+  id String @id @default(uuid())
+
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+
+  amount             Float
+  transactionId      String
+  status             PaymentStatus @default(UNPAID)
+  paymentMethod      String?
+  paymentGatewayData Json?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  @@map("payments")
+}
+
+model Prescription {
+  id            String      @id @default(uuid())
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+
+  doctorId String
+  doctor   Doctor @relation(fields: [doctorId], references: [id])
+
+  patientId    String
+  patient      Patient   @relation(fields: [patientId], references: [id])
+  instructions String
+  followUpDate DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("prescriptions")
+}
+
+model Review {
+  id String @id @default(uuid())
+
+  patientId String
+  patient   Patient @relation(fields: [patientId], references: [id])
+
+  doctorId String
+  doctor   Doctor @relation(fields: [doctorId], references: [id])
+
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+
+  rating    Float
+  comment   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("reviews")
 }
 
 enum UserStatus {
@@ -197,4 +288,16 @@ enum BloodGroup {
 enum MaritalStatus {
   MARRIED
   UNMARRIED
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  INPROGRESS
+  COMPLETED
+  CANCELED
+}
+
+enum PaymentStatus {
+  PAID
+  UNPAID
 }

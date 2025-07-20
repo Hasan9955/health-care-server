@@ -13,11 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = __importDefault(require("./app"));
-const port = 3000;
+const Config_1 = __importDefault(require("./Config"));
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        const server = app_1.default.listen(port, () => {
-            console.log('PH Health server is running...');
+        const server = app_1.default.listen(Config_1.default.port, () => {
+            console.log(`PH Health server is running on port: ${Config_1.default.port}`);
         });
     });
 }

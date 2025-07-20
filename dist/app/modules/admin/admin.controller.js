@@ -17,15 +17,15 @@ const catchAsync_1 = __importDefault(require("../../utility/catchAsync"));
 const pick_1 = __importDefault(require("../../utility/pick"));
 const admin_constant_1 = require("./admin.constant");
 const admin_service_1 = require("./admin.service");
+const response_1 = __importDefault(require("../../utility/response"));
 const getAllAdmins = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const query = req.query;
     const filterQuery = (0, pick_1.default)(query, admin_constant_1.adminFilterableFields);
     const options = (0, pick_1.default)(query, ['page', 'limit', 'sortBy', 'sortOrder']);
     const result = yield admin_service_1.AdminServices.getAllFromDB(filterQuery, options);
-    res.status(200).json({
-        success: true,
+    (0, response_1.default)(res, {
         message: "All admins retrieved successfully",
-        status: 200,
+        statusCode: 200,
         meta: result.meta,
         data: result.data
     });
@@ -33,10 +33,9 @@ const getAllAdmins = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
 const getSingleAdmin = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const result = yield admin_service_1.AdminServices.getSingleAdmin(id);
-    res.status(200).json({
-        success: true,
+    (0, response_1.default)(res, {
         message: "Admin data retrieved successfully",
-        status: 200,
+        statusCode: 200,
         data: result
     });
 }));
@@ -44,20 +43,27 @@ const updateAdmin = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, vo
     const { id } = req.params;
     const payload = req.body;
     const result = yield admin_service_1.AdminServices.updateAdmin(id, payload);
-    res.status(200).json({
-        success: true,
+    (0, response_1.default)(res, {
         message: "Admin data updated successfully",
-        status: 200,
+        statusCode: 200,
+        data: result
+    });
+}));
+const softDeleteAdmin = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const result = yield admin_service_1.AdminServices.softDeleteAdmin(id);
+    (0, response_1.default)(res, {
+        message: "Admin deleted successfully",
+        statusCode: 200,
         data: result
     });
 }));
 const deleteAdmin = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const result = yield admin_service_1.AdminServices.deleteAdmin(id);
-    res.status(200).json({
-        success: true,
+    (0, response_1.default)(res, {
         message: "Admin deleted successfully",
-        status: 200,
+        statusCode: 200,
         data: result
     });
 }));
@@ -65,5 +71,6 @@ exports.AdminControllers = {
     getAllAdmins,
     getSingleAdmin,
     updateAdmin,
-    deleteAdmin
+    deleteAdmin,
+    softDeleteAdmin
 };

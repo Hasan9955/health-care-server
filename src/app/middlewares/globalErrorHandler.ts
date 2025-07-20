@@ -1,11 +1,11 @@
-import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
+import { ErrorRequestHandler } from "express";
 
 type TErrorSources = {
     path: string;
     message: string;
 }[]
 const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
-    console.log(error.status);
+     
     let statusCode = error.status ? error.status : 500;
     let message = error.message ? error.message : 'Something went wrong!';
     let errorSources: TErrorSources = [

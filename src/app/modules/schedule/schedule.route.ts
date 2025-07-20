@@ -10,7 +10,12 @@ router.post('/',
     auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
     scheduleControllers.insertIntoDB)
 
-router.get('/', 
+router.get('/:id', 
+    auth(UserRole.DOCTOR),
+    scheduleControllers.getASchedule)
+
+
+    router.get('/', 
     auth(UserRole.DOCTOR),
     scheduleControllers.getAllSchedules)
 

@@ -17,7 +17,7 @@ const createAdmin = async (req: Request) => {
 
     if (file) {
         const uploadFile = await fileUploader.uploadToCloudinary(file);
-
+        
         payload.admin.profilePhoto = uploadFile?.url
 
     }

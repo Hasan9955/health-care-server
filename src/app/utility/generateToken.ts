@@ -1,4 +1,3 @@
-import { NextFunction, Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
 export type TokenPayload = {
@@ -25,6 +24,7 @@ const generateToken = (payload: TokenPayload, secret: string, expiresIn: string)
 export const verifyToken = (token: string, secret: string) => {
     return jwt.verify(token, secret) as JwtPayload;
 }
+
 // export const verifyToken = (token: string, secret: string) => {
 //     return (req: Request, res: Response, next: NextFunction) => {
 //         try {

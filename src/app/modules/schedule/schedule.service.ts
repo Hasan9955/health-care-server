@@ -157,6 +157,19 @@ const insertIntoDB = async (payload: TSchedule) => {
 }
 
 
+const getASchedule = async (id: string) => {
+    const schedule = await prisma.schedule.findUnique({
+        where: {
+            id
+        }
+    })
+
+    if (!schedule) {
+        throw new Error('Schedule not found')
+    }
+
+    return schedule;
+}
 
 
 
@@ -164,5 +177,6 @@ const insertIntoDB = async (payload: TSchedule) => {
 
 export const scheduleServices = {
     insertIntoDB,
-    getAllSchedules
+    getAllSchedules,
+    getASchedule
 }

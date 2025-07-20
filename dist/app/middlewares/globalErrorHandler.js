@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const globalErrorHandler = (error, req, res, next) => {
+    console.log(error.status);
     let statusCode = error.status ? error.status : 500;
     let message = error.message ? error.message : 'Something went wrong!';
     let errorSources = [
