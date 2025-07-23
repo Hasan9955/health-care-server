@@ -6,9 +6,14 @@ import { paymentControllers } from './payment.controller';
 const router = Router();
 
 
+// Validate SSL payment
+router.get(
+    '/ipn',
+    paymentControllers.validatePayment
+)
 
 router.post(
-    '/init-payment',
+    '/init-payment/:appointmentId',
     paymentControllers.initPayment
 )
 

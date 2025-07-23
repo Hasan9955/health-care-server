@@ -5,8 +5,8 @@ import { paymentServices } from "./payment.service";
 
 
 const initPayment = catchAsync(async (req, res) => { 
-
-    const result = await paymentServices.initPayment();
+    const {appointmentId} = req.params;
+    const result = await paymentServices.initPayment(appointmentId);
 
     sendResponse(res, {
         message: "Payment initiate successfully",
@@ -15,7 +15,19 @@ const initPayment = catchAsync(async (req, res) => {
     })
 })
 
+const validatePayment = catchAsync(async (req, res) => { 
+    
+    const result = await paymentServices.validatePayment(req.query);
+
+    sendResponse(res, {
+        message: "Payment validate successfully",
+        statusCode: 200,
+        data: result
+    })
+})
+
 
 export const paymentControllers = {
-    initPayment
+    initPayment,
+    validatePayment
 }

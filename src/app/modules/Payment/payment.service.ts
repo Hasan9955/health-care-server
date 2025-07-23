@@ -1,49 +1,106 @@
+import axios from 'axios';
+import AppError from '../../error/appError';
+import { prisma } from '../../utility/prisma';
+import { sslService, validateSslPayment } from '../../utility/ssl.service';
+import Config from '../../../Config';
+import { AppointmentStatus, PaymentStatus } from '@prisma/client';
 
 
 
+const initPayment = async (appointmentId: string) => {
+    const paymentData = await prisma.payment.findFirstOrThrow({
+        where: {
+            appointmentId
+        },
+        include: {
+            appointment: {
+                include: {
+                    patient: true
+                }
+            }
+        }
+    })
 
-const initPayment = async () => {
+
+    const initPaymentData = {
+        amount: paymentData.amount,
+        transactionId: paymentData.transactionId,
+        name: paymentData.appointment.patient.name,
+        email: paymentData.appointment.patient.email,
+        contactNumber: paymentData.appointment.patient.contactNumber,
+        address: paymentData.appointment.patient.address,
+    }
+
+
+    const response = await sslService(initPaymentData);
+
+    return {
+        paymentUrl: response.GatewayPageURL
+    }
+
+
+}
+
+
+const validatePayment = async (payload: any) => {
+
+    // TODO: UNCOMMENT THIS CODE WHEN SSL PAYMENT VALIDATION IS IMPLEMENTED!!!!!!!!
+   
+    // if (!payload || !payload.status || !(payload.status === "VALID")) {
+    //     throw new AppError(400, "Payment validation failed");
+    // }
+
+    // const response = await validateSslPayment(payload);
+
+    // if (response.status !== "VALID") {
+    //     throw new AppError(400, "Payment validation failed");
+    // }
+
+    // TODO: REMOVE THIS CODE WHEN SSL PAYMENT VALIDATION IS IMPLEMENTED!!!!!!!!
+    const response = {
+        tran_id: payload.tran_id,
+        amount: payload.amount,
+        status: payload.status
+    }
+
+    // Update the payment status in the database
+    await prisma.$transaction(async (tx) => {
+        const updatedPaymentData = await tx.payment.update({
+            where: {
+                transactionId: response.tran_id
+            },
+            data: {
+                status: PaymentStatus.PAID,
+                paymentGatewayData: response
+            }
+        })
+
+        await tx.appointment.update({
+            where: {
+                id: updatedPaymentData.appointmentId
+            },
+            data: { 
+                paymentStatus: PaymentStatus.PAID
+            }
+        })
+    })
+
+    return {
+        message: "Payment validated successfully",
+        transactionId: response.tran_id,
+        amount: response.amount,
+        status: response.status
+    }
  
-    const data = {
-        
-        total_amount: 100,
-        currency: 'BDT',
-        tran_id: 'REF123', // use unique tran_id for each api call
-        success_url: 'http://localhost:3030/success',
-        fail_url: 'http://localhost:3030/fail',
-        cancel_url: 'http://localhost:3030/cancel',
-        ipn_url: 'http://localhost:3030/ipn',
-        shipping_method: 'Courier',
-        product_name: 'Computer.',
-        product_category: 'Electronic',
-        product_profile: 'general',
-        cus_name: 'Customer Name',
-        cus_email: 'customer@example.com',
-        cus_add1: 'Dhaka',
-        cus_add2: 'Dhaka',
-        cus_city: 'Dhaka',
-        cus_state: 'Dhaka',
-        cus_postcode: '1000',
-        cus_country: 'Bangladesh',
-        cus_phone: '01711111111',
-        cus_fax: '01711111111',
-        ship_name: 'Customer Name',
-        ship_add1: 'Dhaka',
-        ship_add2: 'Dhaka',
-        ship_city: 'Dhaka',
-        ship_state: 'Dhaka',
-        ship_postcode: 1000,
-        ship_country: 'Bangladesh',
-    };
 
-    const result =  12
-console.log(result);
-    return result;
+
 }
 
 
 export const paymentServices = {
-    initPayment
+    initPayment,
+    validatePayment
+
 }
 
 
