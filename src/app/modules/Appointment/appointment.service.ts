@@ -63,7 +63,10 @@ const createAppointment = async (user: JwtPayload, payload: any) => {
 
         // PD-HealthCare-datetime
         const today = new Date();
-        const transactionId = `PD-HealthCare-${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}-${videoCallingId}`;
+        const id1 = payload.scheduleId.replace(/-/g, "").slice(6, 16);
+        const id2 = videoCallingId.replace(/-/g, "").slice(4, 14);
+        const transactionId = id1 + id2;
+ 
 
         await tx.payment.create({
             data: {

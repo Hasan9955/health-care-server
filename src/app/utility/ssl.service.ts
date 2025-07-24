@@ -1,16 +1,10 @@
 import axios, { HttpStatusCode } from "axios";
 import Config from "../../Config";
 import AppError from "../error/appError";
+import { IPaymentData } from "../Interfaces/ssl.interface";
 
 
-export const sslService = async (paymentData: {
-    amount: number;
-    transactionId: string;
-    name: string;
-    email: string;
-    contactNumber: string;
-    address: string | null;
-}) => {
+export const sslService = async (paymentData: IPaymentData) => {
 
     try {
 
@@ -70,8 +64,7 @@ export const sslService = async (paymentData: {
 export const validateSslPayment = async (payload: any) => {
     try{
 
-        // amount=1150.00&bank_tran_id=151114130739MqCBNx5&card_brand=VISA&card_issuer=BRAC+BANK%2C+LTD.&card_issuer_country=Bangladesh&card_issuer_country_code=BD&card_no=432149XXXXXX0667&card_type=VISA-Brac+bank¤cy=BDT&status=VALID&store_amount=1104.00&store_id=blood687cc0631d70c&tran_date=2015-11-14+13%3A07%3A12&tran_id=5646dd9d4b484&val_id=151114130742Bj94IBUk4uE5GRj&verify_sign=6d2df323a72e2fd471768bbf28a0fbe5&verify_key=amount%2Cbank_tran_id%2Ccard_brand%2Ccard_issuer%2Ccard_issuer_country%2Ccard_issuer_country_code%2Ccard_no%2Ccard_type%2Ccurrency%2Cstatus%2Cstore_amount%2Cstore_id%2Ctran_date%2Ctran_id%2Cval_id
-        
+      
          const response = await axios ({
                 method: 'GET',
                 url: `${Config.ssl.ssl_validation_api}?val_id=${payload.val_id}&store_id=${Config.ssl.store_id}&store_passwd=${Config.ssl.store_passwd}&format=json`,
