@@ -24,5 +24,13 @@ router.post('/',
     validateRequest(appointmentValidation.createAppointmentValidationSchema),
     appointmentControllers.createAppointment)
 
+router.patch('/change-status/:id',
+    auth(UserRole.DOCTOR, UserRole.ADMIN, UserRole.SUPER_ADMIN),
+    appointmentControllers.changeAppointmentStatus
+)
+
+router.patch('/cancel-unpaid-appointments',
+    appointmentControllers.cancelUnpaidAppointments
+)
 
 export const appointmentRoutes = router;

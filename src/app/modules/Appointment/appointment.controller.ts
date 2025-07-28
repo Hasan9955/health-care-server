@@ -48,8 +48,38 @@ const myAppointments = catchAsync(async (req, res) => {
 })
 
 
+const changeAppointmentStatus = catchAsync(async (req, res) => {
+     const {id} = req.params;
+     const {status} = req.body;
+    const user = req.user;
+
+    const result = await appointmentService.changeAppointmentStatus(id, status, user)
+
+    sendResponse(res, {
+        message: "Appointments status updated successfully",
+        statusCode: 200,
+        data: result
+    })
+})
+
+
+
+const cancelUnpaidAppointments = catchAsync(async (req, res) => {
+     
+    const result = await appointmentService.cancelUnpaidAppointments();
+
+    sendResponse(res, {
+        message: "Unpaid appointments canceled successfully",
+        statusCode: 200,
+        data: result
+    })
+})
+
+
 export const appointmentControllers = {
     createAppointment,
     myAppointments,
-    getAllAppointments
+    getAllAppointments,
+    changeAppointmentStatus,
+    cancelUnpaidAppointments
 }
